@@ -9,7 +9,7 @@ namespace AttendanceSystem2.Pages
         public string FullName { get; set; } = "";
         public string Section { get; set; } = "";
         public DateTime Date { get; set; }
-        public string Status { get; set; } = ""; // "Present" or "Absent"
+        public string Status { get; set; } = "";
     }
 
     public class AttendancesModel : PageModel
@@ -20,45 +20,38 @@ namespace AttendanceSystem2.Pages
         [BindProperty]
         public List<AttendanceRecord> AttendanceRecords { get; set; } = new List<AttendanceRecord>();
 
-        // Static storage for attendance records (later we'll use MongoDB)
         public static List<AttendanceRecord> AllAttendanceRecords = new List<AttendanceRecord>();
 
         public void OnGet()
         {
-            // Get students from the Index page
             Students = IndexModel.GetAllStudents();
 
-            // Initialize attendance records for each student
             AttendanceRecords = Students.Select(s => new AttendanceRecord
             {
                 StudentId = s.StudentId,
                 FullName = s.FullName,
                 Date = DateTime.Now.Date,
-                Status = "" // Empty by default
+                Status = "" 
             }).ToList();
         }
 
         public IActionResult OnPost()
         {
-            // Get the current students again
             Students = IndexModel.GetAllStudents();
 
             var attendanceCount = 0;
             var presentCount = 0;
             var absentCount = 0;
 
-            // Process attendance records
             for (int i = 0; i < AttendanceRecords.Count && i < Students.Count; i++)
             {
                 if (!string.IsNullOrEmpty(AttendanceRecords[i].Status))
                 {
-                    // Set additional properties
                     AttendanceRecords[i].StudentId = Students[i].StudentId;
                     AttendanceRecords[i].FullName = Students[i].FullName;
                     AttendanceRecords[i].Section = Students[i].Section;
                     AttendanceRecords[i].Date = DateTime.Now.Date;
 
-                    // Add to our storage
                     AllAttendanceRecords.Add(AttendanceRecords[i]);
 
                     attendanceCount++;
@@ -71,7 +64,6 @@ namespace AttendanceSystem2.Pages
 
             TempData["AttendanceMessage"] = $"Attendance saved! {attendanceCount} records processed. Present: {presentCount}, Absent: {absentCount}";
 
-            // Redirect to avoid resubmission
             return RedirectToPage();
         }
     }
