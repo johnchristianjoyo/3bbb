@@ -23,12 +23,11 @@ namespace AttendanceSystem2.Pages
         [BindProperty]
         public StudentModel Student { get; set; } = new StudentModel();
 
-        // This will hold our students temporarily (later we'll use MongoDB)
         public static List<StudentModel> Students = new List<StudentModel>();
 
         public void OnGet()
         {
-            // This runs when page loads
+            
         }
 
         public IActionResult OnPost()
@@ -38,7 +37,6 @@ namespace AttendanceSystem2.Pages
                 return Page();
             }
 
-            // For now, we'll store in memory (later MongoDB)
             Students.Add(new StudentModel
             {
                 FullName = Student.FullName,
@@ -48,13 +46,11 @@ namespace AttendanceSystem2.Pages
 
             TempData["Message"] = $"Student {Student.FullName} added successfully!";
 
-            // Clear the form
             Student = new StudentModel();
 
             return Page();
         }
 
-        // Method to get all students (we'll use this later for the attendance page)
         public static List<StudentModel> GetAllStudents()
         {
             return Students;
